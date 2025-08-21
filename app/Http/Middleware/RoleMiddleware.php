@@ -9,26 +9,24 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RoleMiddleware
 {
-    /**
+     /**
      * Handle an incoming request.
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @param  string[]  ...$roles
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, ...$roles)
+    public function handle(Request $request, Closure $next, $role)
     {
         if (!Auth::check()) {
-           
-            return redirect()->route('login');
+            return redirect('/'); 
         }
 
         $user = Auth::user();
 
-        if (!in_array($user->role, $roles)) {
-           
-            abort(403, 'Unauthorized.');
+        if ($user->role !== $role) {
+            abort(403, 'Unauthorized');
         }
 
         return $next($request);
+
     }
 }
